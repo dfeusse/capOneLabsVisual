@@ -5,7 +5,7 @@ d3.json("data.json", function(data) {
         .attr('class', 'd3-tip')
         //.html(function(d) { return 'charity: ' + '<span>' + d.name + '</span>' + '<br>' + '<span>' +'$'+ d.value + '</span>' + ' raised' + '<br>' + d.category })
         //.html(function(d) { return d.name; })
-        .html(function(d) { return 'name: ' + '<span>' + d.name + '</span>' + '<br>' + d.region + '<br>' + d.category + '<br>' + d.month})
+        .html(function(d) { return 'name: ' + '<span>' + d.name + '</span>' + '<br>' + d.region + '<br>' + d.category + '<br>' + d.month + '<br>' + d.decade})
         .offset([-12, 0]);
 
     var buttonAll = d3.select("#buttons")
@@ -25,11 +25,11 @@ d3.json("data.json", function(data) {
         .attr("type","button")
         .attr("value", "Generations");
 
-    var buttonCategory = d3.select("#buttons")
+    var buttonRegion = d3.select("#buttons")
         .append("input")
         //.attr("class", "btn btn-xs")
         .attr("class", "button")
-        .attr("id", "button_category")
+        .attr("id", "button_region")
         .attr("type","button")
         .attr("value", "Regions");
 
@@ -39,7 +39,15 @@ d3.json("data.json", function(data) {
         .attr("class", "button")
         .attr("id", "button_time")
         .attr("type","button")
-        .attr("value", "Time of Workouts");
+        .attr("value", "Gender");
+
+    var buttonDecade = d3.select("#buttons")
+        .append("input")
+        //.attr("class", "btn btn-xs")
+        .attr("class", "button")
+        .attr("id", "button_decade")
+        .attr("type","button")
+        .attr("value", "Decade");
 
     var width = 1000,
     	height = 550,
@@ -50,7 +58,7 @@ d3.json("data.json", function(data) {
 
     var center = {x: width / 2, y: height / 2};
 
-    var center_all = {x: 450, y: 250};
+    var center_all = {x: 450, y: 270};
 
     var month_centers = {
         "GI Generation": {x: 175, y: 175},
@@ -61,30 +69,30 @@ d3.json("data.json", function(data) {
         "Generation Z": {x: 670, y: 400}
     };
 
-    var category_centers = {
-        "Northeast": {x: 200, y: 175},
-        "Southeast": {x: 450, y: 175},
-        "Southwest": {x: 680, y: 175},
-        "Midwest": {x: 325, y: 400},
-        "West": {x: 575, y: 400}
+    var region_centers = {
+        "West": {x: 200, y: 175},
+        "Midwest": {x: 450, y: 175},
+        "Northeast": {x: 680, y: 175},
+        "Southwest": {x: 325, y: 400},
+        "Southeast": {x: 575, y: 400}
     };
 
     var time_centers = {
-        "M": {x: 200, y: 250},
-        "F": {x: 700, y: 250}
+        "M": {x: 200, y: 270},
+        "F": {x: 500, y: 270}
     };
 
     var decade_centers = {
-        "The Tens": {},
-        "Roaring Twenties": {x: 175, y: 175},
-        "Threadbare Thirties": {x: 425, y: 175},
-        "Flying Forties": {x: 670, y: 175},
-        "Fabulous Fifties": {x: 140, y: 400},
-        "Swingin' Sixties": {x: 350, y: 400},
-        "Disco Era": {x: 525, y: 400},
-        "Greedy Eighties": {x: 140, y: 400},
-        "the Nineties": {x: 350, y: 400},
-        "the 2000s": {x: 525, y: 400}
+        "The Tens": {x: 150, y: 175},
+        "Roaring Twenties": {x: 350, y: 175},
+        "Threadbare Thirties": {x: 500, y: 175},
+        "Flying Forties": {x: 150, y: 310},
+        "Fabulous Fifties": {x: 350, y: 300},
+        "Swingin' Sixties": {x: 500, y: 300},
+        "Disco Era": {x: 175, y: 410},
+        "Greedy Eighties": {x: 320, y: 410},
+        "the Nineties": {x: 440, y: 425},
+        "the 2000s": {x: 600, y: 425}
     }
 
     var fill_color = d3.scale.ordinal()
@@ -116,7 +124,8 @@ d3.json("data.json", function(data) {
             //meetup: d.event_id,
             time: d.Decade,
             month: d.Generation,
-            category: d.Max_Gender
+            category: d.Max_Gender,
+            decade: d.Decade
     	};
     	nodes.push(node);
     });
@@ -265,8 +274,8 @@ d3.json("data.json", function(data) {
             vis.selectAll(".rows").remove();
 
             //column labeling
-    var meetups_x = {"M": 200 - 75, "Tu": 430 - 20, "W": 700, "Th": 140 - 50, "F": 325, "Sa": 523, "Su": 750};
-    var meetups_y = {"M": 60, "Tu": 50, "W": 50, "Th": 320, "F": 320, "Sa": 320, "Su": 320};
+            var meetups_x = {"GI Generation": 200 - 100, "Silent Generation": 430 - 20, "Baby Boomers": 720, "Generation X": 200 - 100, "Millenials": 430, "Generation Z": 720};
+            var meetups_y = {"GI Generation": 60, "Silent Generation": 50, "Baby Boomers": 50, "Generation X": 320, "Millenials": 320, "Generation Z": 320};
             var meetups_x_data = d3.keys(meetups_x)
             //var meetups_y_data = d3.keys(meetups_y)
             var columnlabels = vis.selectAll("body")
@@ -283,7 +292,7 @@ d3.json("data.json", function(data) {
         }) //end of buttonWeekly
 
     //third button, break up by category
-    buttonCategory
+    buttonRegion
         .on("click", function() {
             force//.gravity(-0.01)
             //.charge(charge)
@@ -291,7 +300,7 @@ d3.json("data.json", function(data) {
             .on('tick', function(e) {
                 force.nodes().forEach(function(d) {
                     //var target = center
-                    var target = category_centers[d.region]
+                    var target = region_centers[d.region]
                     d.x = d.x + (target.x - d.x) * (damper + 0.02) * e.alpha;
                     d.y = d.y + (target.y - d.y) * (damper + 0.02) * e.alpha;
                 })
@@ -307,17 +316,17 @@ d3.json("data.json", function(data) {
             vis.selectAll(".rows").remove();
 
             //column labeling
-            var meetups_x = {"Northeast": 200 - 55, 
-                            "Southeast": 450 - 10, 
-                            "Southwest": 710, 
-                            "Midwest": 300, 
-                            "West": 590};
+            var meetups_x = {"West": 200 - 55, 
+                            "Midwest": 450 - 10, 
+                            "Northeast": 710, 
+                            "Southwest": 300, 
+                            "Southeast": 590};
 
-            var meetups_y = {"Northeast": 165 - 90, 
-                            "Southeast": 165 - 90, 
-                            "Southwest": 165 - 90, 
-                            "Midwest": 400 - 60, 
-                            "West": 400 - 60};
+            var meetups_y = {"West": 165 - 90, 
+                            "Midwest": 165 - 90, 
+                            "Northeast": 165 - 90, 
+                            "Southwest": 400 - 60, 
+                            "Southeast": 400 - 60};
 
             var meetups_x_data = d3.keys(meetups_x)
             //var meetups_y_data = d3.keys(meetups_y)
@@ -343,7 +352,7 @@ d3.json("data.json", function(data) {
             .on('tick', function(e) {
                 force.nodes().forEach(function(d) {
                     //var target = center
-                    var target = time_centers[d.time]
+                    var target = time_centers[d.gender]
                     d.x = d.x + (target.x - d.x) * (damper + 0.02) * e.alpha;
                     d.y = d.y + (target.y - d.y) * (damper + 0.02) * e.alpha;
                 })
@@ -359,13 +368,77 @@ d3.json("data.json", function(data) {
             vis.selectAll(".rows").remove();
 
             //column labeling
-            var meetups_x = {"AM": 160, 
-                            "Lunch": 460, 
-                            "PM": 730};
+            var meetups_x = {"M": 160, 
+                            "F": 540};
 
-            var meetups_y = {"AM": 110, 
-                            "Lunch": 110, 
-                            "PM": 110};
+            var meetups_y = {"M": 100, 
+                            "F": 100};
+
+            var meetups_x_data = d3.keys(meetups_x)
+            //var meetups_y_data = d3.keys(meetups_y)
+            var columnlabels = vis.selectAll("body")
+                .data(meetups_x_data);
+
+            columnlabels.enter().append("text")
+                .attr("class", "years")
+                .attr("x", function(d) { return meetups_x[d]; })
+                .attr("y", function(d) { return meetups_y[d]; })
+                .attr("text-anchor", "middle")
+                .text(function(d) { return d; });
+            //start
+            force.start();
+        }) //end of buttonWeekly
+
+    //fifth button, break up by Decade
+    buttonDecade
+        .on("click", function() {
+            force//.gravity(-0.01)
+            //.charge(charge)
+            //.friction(0.9)
+            .on('tick', function(e) {
+                force.nodes().forEach(function(d) {
+                    //var target = center
+                    var target = decade_centers[d.decade]
+                    d.x = d.x + (target.x - d.x) * (damper + 0.02) * e.alpha;
+                    d.y = d.y + (target.y - d.y) * (damper + 0.02) * e.alpha;
+                })
+                vis.selectAll('circle')
+                    .attr('cx', function(d) {return d.x;})
+                    .attr('cy', function(d) {return d.y;});
+        });
+
+            //hide years
+            vis.selectAll(".years").remove();
+            //vis.selectAll(".years").transition().duration(1000).remove();
+            //hide rows
+            vis.selectAll(".rows").remove();
+
+            //column labeling
+            var meetups_x = {
+                "The Tens": {x: 500, y: 500},
+                "Roaring Twenties": {x: 175, y: 175},
+                "Threadbare Thirties": {x: 425, y: 175},
+                "Flying Forties": {x: 670, y: 175},
+                "Fabulous Fifties": {x: 140, y: 400},
+                "Swingin' Sixties": {x: 350, y: 400},
+                "Disco Era": {x: 525, y: 400},
+                "Greedy Eighties": {x: 140, y: 400},
+                "the Nineties": {x: 350, y: 400},
+                "the 2000s": {x: 525, y: 400}
+            };
+
+            var meetups_y = {
+                "The Tens": {x: 500, y: 500},
+                "Roaring Twenties": {x: 175, y: 175},
+                "Threadbare Thirties": {x: 425, y: 175},
+                "Flying Forties": {x: 670, y: 175},
+                "Fabulous Fifties": {x: 140, y: 400},
+                "Swingin' Sixties": {x: 350, y: 400},
+                "Disco Era": {x: 525, y: 400},
+                "Greedy Eighties": {x: 140, y: 400},
+                "the Nineties": {x: 350, y: 400},
+                "the 2000s": {x: 525, y: 400}
+            };
 
             var meetups_x_data = d3.keys(meetups_x)
             //var meetups_y_data = d3.keys(meetups_y)
